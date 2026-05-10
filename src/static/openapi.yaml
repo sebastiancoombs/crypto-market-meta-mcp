@@ -1,0 +1,105 @@
+openapi: 3.1.0
+info:
+  title: Wallet Intelligence Meta-Aggregator MCP (x402)
+  version: 0.1.0
+  description: |
+    Pay-per-call x402 META-aggregator for EVM wallet intelligence.
+    Composes 7 wallet-intelligence services in parallel into one wallet
+    dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals
+    risk, CEX flows, funding trace). Single endpoint, fail-soft per axis.
+    Multichain (ethereum/base/arbitrum/optimism/polygon). Settle USDC on
+    Base via x402. No signup, no API key.
+servers:
+  - url: https://wallet-intel-meta-mcp.mtree.workers.dev
+paths:
+  /healthz:
+    get:
+      summary: Service health
+      operationId: healthz
+      responses:
+        "200":
+          description: OK
+  /v1/wallet/dossier:
+    post:
+      summary: Composite EVM wallet dossier (7-axis fan-out)
+      description: |
+        $0.75 USDC on Base via x402. Parallel fan-out to 7 wallet-intelligence
+        services: labels (ENS/OFAC/mixer registries), portfolio_risk
+        (Aave/Compound/UniV3/holdings/GoPlus), defi_health
+        (Morpho/Aerodrome/Pendle/Lido), mev_exposure (sandwich score),
+        approvals_risk (ERC-20/721/1155 unlimited+malicious+unverified),
+        cex_flows (per-CEX flows), funding_trace (multi-hop predecessor walk).
+        Per-axis source_url + ok + latency_ms. Fail-soft: per-axis errors
+        don't fail the dossier.
+      operationId: walletDossier
+      x-x402-price-usd: 0.75
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [address]
+              properties:
+                address:
+                  type: string
+                  description: EVM address (0x… 20 bytes)
+                  example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                chain:
+                  type: string
+                  description: Single-chain axes default (ethereum/base/arbitrum/optimism/polygon)
+                  example: "ethereum"
+                chains:
+                  type: array
+                  items: { type: string, enum: [ethereum, base, arbitrum, optimism, polygon] }
+                  description: Multi-chain axes default
+                  example: ["ethereum", "base"]
+      responses:
+        "402":
+          description: Payment required (x402 envelope returned)
+        "200":
+          description: Composite wallet dossier payload
+        "400":
+          description: Invalid address
+  /v1/wallet/dossier_summary:
+    post:
+      summary: Plain-English 2-paragraph wallet summary
+      description: |
+        $0.50 USDC on Base via x402. Same 7-axis fan-out as dossier, condensed
+        to a plain-English 2-paragraph summary string + counts. Faster, lighter
+        shape, ideal for triage and chat agents.
+      operationId: walletDossierSummary
+      x-x402-price-usd: 0.50
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [address]
+              properties:
+                address:
+                  type: string
+                  description: EVM address (0x… 20 bytes)
+                  example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                chain:
+                  type: string
+                  example: "ethereum"
+                chains:
+                  type: array
+                  items: { type: string, enum: [ethereum, base, arbitrum, optimism, polygon] }
+                  example: ["ethereum", "base"]
+      responses:
+        "402":
+          description: Payment required (x402 envelope returned)
+        "200":
+          description: Plain-English summary payload
+        "400":
+          description: Invalid address
+  /mcp:
+    post:
+      summary: MCP Streamable HTTP transport (JSON-RPC 2.0; unpaid catalog discovery)
+      operationId: mcpRpc
+      responses:
+        "200":
+          description: JSON-RPC response

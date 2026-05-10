@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wallet Intelligence Meta-Aggregator MCP - x402 pay-per-call</title>
+  <meta name="description" content="Pay-per-call x402 META-aggregator: 7-axis EVM wallet dossier in one call (labels, portfolio risk, DeFi health, MEV exposure, approvals risk, CEX flows, funding trace). Pay USDC on Base. No signup, no API key.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://wallet-intel-meta-mcp.mtree.workers.dev/agent-discovery">
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 16px/1.5 -apple-system,system-ui,sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    code, pre { font: 13px/1.5 ui-monospace,Menlo,monospace; }
+    pre { background: #f4f4f4; padding: 12px; overflow-x: auto; border-radius: 6px; }
+    h1, h2 { margin-top: 1.5em; }
+    .pill { display: inline-block; padding: 2px 8px; background: #eef; border-radius: 999px; font-size: 12px; margin-right: 4px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; border-bottom: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
+    @media (prefers-color-scheme: dark) {
+      pre { background: #1f1f1f; }
+      th, td { border-bottom-color: #333; }
+      .pill { background: #2a2a3a; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Wallet Intelligence Meta-Aggregator MCP <span class="pill">x402</span> <span class="pill">USDC on Base</span> <span class="pill">7-axis fan-out</span></h1>
+  <p><strong>One call - 7 EVM wallet-intelligence axes in parallel.</strong> Composes labels, portfolio risk, DeFi position health, MEV exposure, approvals risk, CEX flows, and funding-origin trace into a single dossier. No signup, no API key. Settle USDC on Base via x402.</p>
+
+  <h2>Endpoints</h2>
+  <table>
+    <thead><tr><th>Endpoint</th><th>What you get</th><th>Price</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>POST /v1/wallet/dossier</code></td>
+        <td>Full 7-axis dossier with per-axis source_url, ok, latency_ms, status_code, raw upstream data. Fail-soft.</td>
+        <td>$0.75</td>
+      </tr>
+      <tr>
+        <td><code>POST /v1/wallet/dossier_summary</code></td>
+        <td>Plain-English 2-paragraph summary derived from the same 7 axes. Triage / chat-agent friendly.</td>
+        <td>$0.50</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Composed axes</h2>
+  <table>
+    <thead><tr><th>Axis</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td><code>labels</code></td><td>ENS + OFAC SDN + Tornado Cash mixer registry + on-chain ERC-20 metadata + public-label registry</td></tr>
+      <tr><td><code>portfolio_risk</code></td><td>Aave V3 + Compound III + Uniswap V3 LP + ERC-20 holdings + GoPlus token-security</td></tr>
+      <tr><td><code>defi_health</code></td><td>Morpho Blue + Aerodrome + Pendle + Lido positions</td></tr>
+      <tr><td><code>mev_exposure</code></td><td>Sandwich-attack exposure score over recent blocks</td></tr>
+      <tr><td><code>approvals_risk</code></td><td>Active ERC-20 / 721 / 1155 approval-risk score (unlimited + known-malicious + unverified)</td></tr>
+      <tr><td><code>cex_flows</code></td><td>Per-chain per-CEX deposit/withdrawal flows + net direction</td></tr>
+      <tr><td><code>funding_trace</code></td><td>Multi-hop predecessor walk + CEX/mixer/sanctioned/bridge classification</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Discovery surfaces</h2>
+  <ul>
+    <li><a href="/.well-known/agent-card.json"><code>/.well-known/agent-card.json</code></a> - Google A2A AgentCard</li>
+    <li><a href="/.well-known/mcp.json"><code>/.well-known/mcp.json</code></a> - MCP server manifest</li>
+    <li><a href="/.well-known/ai-plugin.json"><code>/.well-known/ai-plugin.json</code></a> - OpenAI plugin manifest</li>
+    <li><a href="/openapi.yaml"><code>/openapi.yaml</code></a> - OpenAPI 3.1 spec</li>
+    <li><a href="/mcp"><code>/mcp</code></a> - MCP Streamable HTTP transport (JSON-RPC 2.0)</li>
+  </ul>
+
+  <h2>Quick start (curl)</h2>
+  <pre><code># 1) First call returns 402 with x402 envelope:
+curl -i -X POST https://wallet-intel-meta-mcp.mtree.workers.dev/v1/wallet/dossier_summary \
+  -H 'content-type: application/json' \
+  -d '{"address":"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045","chains":["ethereum","base"]}'
+
+# 2) Settle the envelope (sign EXACT-scheme USDC payment on Base, payTo as advertised),
+#    then retry with X-PAYMENT header. The response is the actual data.</code></pre>
+
+  <h2>Why this exists</h2>
+  <p>EVM wallet intelligence today is fragmented across 7+ specialized data sources - each requires a separate integration, separate auth, separate billing. This service is the x402-native one-call door: agents settle a single payment and get all 7 axes back in parallel with per-axis source attribution. Fail-soft means you never lose the whole dossier because one axis timed out. Built for compliance triage, treasury risk dashboards, and MCP-aware agents that need a single composite signal instead of 7 round-trips.</p>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Wallet Intelligence Meta-Aggregator MCP",
+  "name_for_model": "wallet_intel_meta_mcp",
+  "description_for_human": "One call → 7-axis EVM wallet dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals risk, CEX flows, funding trace). Pay USDC on Base via x402 — no signup.",
+  "description_for_model": "Pay-per-call x402 META-aggregator for EVM wallet intelligence. Two endpoints: (1) wallet_dossier ($0.75) — parallel fan-out to 7 wallet-intel services, returns per-axis source_url + ok + latency_ms + raw upstream data; fail-soft. (2) wallet_dossier_summary ($0.50) — same fan-out condensed to a plain-English 2-paragraph summary. Composes: ENS+OFAC+mixer-registry labels, Aave/Compound/UniV3/holdings portfolio risk, Morpho/Aerodrome/Pendle/Lido DeFi health, sandwich-attack MEV exposure, ERC-20/721/1155 approval risk, per-CEX deposit/withdrawal flows, multi-hop funding-origin trace. Multichain (ethereum/base/arbitrum/optimism/polygon). All endpoints return 402 on first call; settle the x402 envelope (USDC on Base, payTo 0x1664530DC2A1CA350B1dbaD1Fc1F1a70c90fe4de) and retry with X-PAYMENT. No signup.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://wallet-intel-meta-mcp.mtree.workers.dev/openapi.yaml"
+  },
+  "logo_url": "https://wallet-intel-meta-mcp.mtree.workers.dev/agent-discovery",
+  "contact_email": "hello@",
+  "legal_info_url": "/legal"
+}

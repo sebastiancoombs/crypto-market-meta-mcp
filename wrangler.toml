@@ -1,0 +1,27 @@
+name = "wallet-intel-meta-mcp"
+main = "src/worker.js"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Bundle the static manifests (HTML + YAML) as text imports.
+[[rules]]
+type = "Text"
+globs = ["**/*.html", "**/*.yaml", "**/*.yml"]
+fallthrough = true
+
+# Public, non-secret config.
+[vars]
+X402_NETWORK = "base"
+UPSTREAM_TIMEOUT_MS = "8000"
+
+# Secrets (do NOT put values here — set via `wrangler secret put`):
+#   wrangler secret put PAY_TO_ADDRESS
+#   wrangler secret put X402_FACILITATOR_URL     (optional — defaults to x402.org/facilitator)
+#   wrangler secret put CDP_API_KEY_ID           (optional — Coinbase-hosted facilitator)
+#   wrangler secret put CDP_API_KEY_SECRET       (optional — Coinbase-hosted facilitator)
+
+# Shared paid-call capture DB (one row per settled paid call across all services).
+[[d1_databases]]
+binding = "PAID_CALLS_DB"
+database_name = "money-tree-paid-calls"
+database_id = "1e9ad254-6608-44a4-b5ac-9999fc88e8b5"

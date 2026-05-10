@@ -1,0 +1,18 @@
+{
+  "name": "wallet-intel-meta-mcp",
+  "version": "0.1.0",
+  "description": "x402 META-aggregator: composes 7 EVM wallet-intelligence services into one wallet dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals risk, CEX flows, funding trace). Pay-per-call USDC on Base.",
+  "private": true,
+  "type": "module",
+  "main": "src/worker.js",
+  "scripts": {
+    "wrangler:dev": "wrangler dev",
+    "wrangler:deploy": "wrangler deploy",
+    "wrangler:dry-run": "wrangler deploy --dry-run --outdir=.wrangler-dryrun"
+  },
+  "dependencies": {
+    "@coinbase/x402": "^2.1.0",
+    "hono": "^4.6.0",
+    "x402-hono": "^1.2.0"
+  }
+}

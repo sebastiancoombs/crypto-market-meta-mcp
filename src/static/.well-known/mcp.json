@@ -1,0 +1,41 @@
+{
+  "manifestVersion": "1.0",
+  "protocolVersions": ["2025-06-18"],
+  "servers": [
+    {
+      "id": "wallet-intel-meta-mcp",
+      "name": "Wallet Intelligence Meta-Aggregator MCP (x402)",
+      "slug": "wallet-intel-meta-mcp",
+      "category": "Blockchain & Web3",
+      "description": "Pay-per-call x402 META-aggregator: composes 7 EVM wallet-intelligence services in parallel into one wallet dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals risk, CEX flows, funding trace). Single endpoint, fail-soft per axis. Live on Cloudflare Workers. No signup, no API key — pay USDC on Base.",
+      "status": "stable",
+      "transport": {
+        "type": "http+sse",
+        "endpoint": "https://wallet-intel-meta-mcp.mtree.workers.dev/mcp"
+      },
+      "authentication": {
+        "scheme": "x402",
+        "credentials": "Pay-per-call via x402 USDC on Base — no signup, no API key. Each call returns 402 with an EXACT-scheme requirement; agents pay 0x1664530DC2A1CA350B1dbaD1Fc1F1a70c90fe4de in Base USDC and retry with X-PAYMENT."
+      },
+      "capabilities": {
+        "tools": true,
+        "resources": false,
+        "prompts": false,
+        "logging": false
+      },
+      "docsUrl": "https://wallet-intel-meta-mcp.mtree.workers.dev/agent-discovery",
+      "tools": [
+        {
+          "name": "/v1/wallet/dossier",
+          "method": "POST",
+          "description": "7-axis EVM wallet dossier (labels, portfolio_risk, defi_health, mev_exposure, approvals_risk, cex_flows, funding_trace). Per-axis source_url + ok + latency_ms. Fail-soft. $0.75."
+        },
+        {
+          "name": "/v1/wallet/dossier_summary",
+          "method": "POST",
+          "description": "Plain-English 2-paragraph summary of the same 7-axis fan-out. $0.50."
+        }
+      ]
+    }
+  ]
+}

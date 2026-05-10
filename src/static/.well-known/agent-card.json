@@ -1,0 +1,71 @@
+{
+  "name": "Wallet Intelligence Meta-Aggregator MCP",
+  "description": "Pay-per-call x402 META-aggregator: composes 7 EVM wallet-intelligence services in parallel into one wallet dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals risk, CEX flows, funding trace). Single endpoint, fail-soft per axis. Pay USDC on Base — no signup, no API key.",
+  "url": "https://wallet-intel-meta-mcp.mtree.workers.dev",
+  "version": "0.1.0",
+  "documentationUrl": "https://wallet-intel-meta-mcp.mtree.workers.dev/agent-discovery",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "authentication": {
+    "schemes": ["x402"],
+    "credentials": "Pay-per-call via x402 USDC on Base — no signup, no API key. Each call returns 402 with an EXACT-scheme requirement; agents pay 0x1664530DC2A1CA350B1dbaD1Fc1F1a70c90fe4de in Base USDC and retry with X-PAYMENT."
+  },
+  "defaultInputModes": ["application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "wallet-dossier",
+      "name": "EVM Wallet Dossier (7-axis fan-out)",
+      "description": "Composite wallet dossier — fan-out to 7 wallet-intelligence services in parallel: labels, portfolio_risk, defi_health, mev_exposure, approvals_risk, cex_flows, funding_trace. Per-axis source_url + ok + latency_ms. Fail-soft. $0.75/call.",
+      "tags": [
+        "wallet",
+        "evm",
+        "intelligence",
+        "dossier",
+        "aggregator",
+        "meta",
+        "labels",
+        "risk",
+        "defi",
+        "mev",
+        "approvals",
+        "cex",
+        "funding",
+        "compliance",
+        "security"
+      ],
+      "examples": [
+        "Build a full intelligence dossier for 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 across ethereum + base",
+        "Run all 7 wallet-intel axes against this address in one call",
+        "Compose labels + portfolio risk + DeFi health + MEV + approvals + CEX flows + funding trace for a wallet"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "wallet-dossier-summary",
+      "name": "EVM Wallet Dossier Summary (plain-English)",
+      "description": "Plain-English 2-paragraph summary derived from the 7 dossier axes. Triage-friendly, chat-agent-ready. Same fan-out, lighter return shape. $0.50/call.",
+      "tags": [
+        "wallet",
+        "evm",
+        "summary",
+        "dossier",
+        "triage",
+        "chat-agent",
+        "meta",
+        "aggregator"
+      ],
+      "examples": [
+        "Give me a one-paragraph wallet intelligence summary for vitalik.eth",
+        "Quick-triage 0xabc... — what's the risk profile in plain English?",
+        "Summarize this wallet's posture across labels, risk, MEV, approvals, CEX, funding"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    }
+  ]
+}
