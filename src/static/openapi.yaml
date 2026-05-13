@@ -1,105 +1,55 @@
 openapi: 3.1.0
 info:
-  title: Wallet Intelligence Meta-Aggregator MCP (x402)
+  title: Crypto Market META MCP (x402)
   version: 0.1.0
   description: |
-    Pay-per-call x402 META-aggregator for EVM wallet intelligence.
-    Composes 7 wallet-intelligence services in parallel into one wallet
-    dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals
-    risk, CEX flows, funding trace). Single endpoint, fail-soft per axis.
-    Multichain (ethereum/base/arbitrum/optimism/polygon). Settle USDC on
-    Base via x402. No signup, no API key.
+    Pay-per-call x402 META-aggregator: composes 5 already-shipped MT
+    services (coinpaprika + coincap + coinlore + cryptocompare + kraken) in
+    parallel into a single cross-feed consensus price per symbol (median
+    + mean + spread). Settle USDC on Base via x402.
 servers:
-  - url: https://wallet-intel-meta-mcp.mtree.workers.dev
+  - url: https://crypto-market-meta-mcp.mtree.workers.dev
+x-pricing:
+  - path: /v1/crypto/consensus
+    method: POST
+    price: $0.10
+    amount: "0.10"
+    asset: USDC
+    network: base
+  - path: /v1/crypto/consensus_summary
+    method: POST
+    price: $0.05
+    amount: "0.05"
+    asset: USDC
+    network: base
 paths:
   /healthz:
-    get:
-      summary: Service health
-      operationId: healthz
-      responses:
-        "200":
-          description: OK
-  /v1/wallet/dossier:
+    get: { summary: Service health, responses: { "200": { description: OK } } }
+  /v1/crypto/consensus:
     post:
-      summary: Composite EVM wallet dossier (7-axis fan-out)
-      description: |
-        $0.75 USDC on Base via x402. Parallel fan-out to 7 wallet-intelligence
-        services: labels (ENS/OFAC/mixer registries), portfolio_risk
-        (Aave/Compound/UniV3/holdings/GoPlus), defi_health
-        (Morpho/Aerodrome/Pendle/Lido), mev_exposure (sandwich score),
-        approvals_risk (ERC-20/721/1155 unlimited+malicious+unverified),
-        cex_flows (per-CEX flows), funding_trace (multi-hop predecessor walk).
-        Per-axis source_url + ok + latency_ms. Fail-soft: per-axis errors
-        don't fail the dossier.
-      operationId: walletDossier
-      x-x402-price-usd: 0.75
+      summary: Cross-feed crypto consensus price (5-feed fan-out)
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [address]
-              properties:
-                address:
-                  type: string
-                  description: EVM address (0x… 20 bytes)
-                  example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-                chain:
-                  type: string
-                  description: Single-chain axes default (ethereum/base/arbitrum/optimism/polygon)
-                  example: "ethereum"
-                chains:
-                  type: array
-                  items: { type: string, enum: [ethereum, base, arbitrum, optimism, polygon] }
-                  description: Multi-chain axes default
-                  example: ["ethereum", "base"]
+              required: [symbol]
+              properties: { symbol: { type: string, description: "Crypto ticker symbol (BTC, ETH, SOL, USDC)" } }
       responses:
-        "402":
-          description: Payment required (x402 envelope returned)
-        "200":
-          description: Composite wallet dossier payload
-        "400":
-          description: Invalid address
-  /v1/wallet/dossier_summary:
+        "200": { description: Consensus price + per-feed envelopes }
+        "402": { description: Payment required (x402 envelope) }
+  /v1/crypto/consensus_summary:
     post:
-      summary: Plain-English 2-paragraph wallet summary
-      description: |
-        $0.50 USDC on Base via x402. Same 7-axis fan-out as dossier, condensed
-        to a plain-English 2-paragraph summary string + counts. Faster, lighter
-        shape, ideal for triage and chat agents.
-      operationId: walletDossierSummary
-      x-x402-price-usd: 0.50
+      summary: Plain-English consensus summary
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [address]
-              properties:
-                address:
-                  type: string
-                  description: EVM address (0x… 20 bytes)
-                  example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-                chain:
-                  type: string
-                  example: "ethereum"
-                chains:
-                  type: array
-                  items: { type: string, enum: [ethereum, base, arbitrum, optimism, polygon] }
-                  example: ["ethereum", "base"]
+              required: [symbol]
+              properties: { symbol: { type: string } }
       responses:
-        "402":
-          description: Payment required (x402 envelope returned)
-        "200":
-          description: Plain-English summary payload
-        "400":
-          description: Invalid address
-  /mcp:
-    post:
-      summary: MCP Streamable HTTP transport (JSON-RPC 2.0; unpaid catalog discovery)
-      operationId: mcpRpc
-      responses:
-        "200":
-          description: JSON-RPC response
+        "200": { description: Plain-English summary + consensus }
+        "402": { description: Payment required (x402 envelope) }

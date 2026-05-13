@@ -1,7 +1,7 @@
 {
-  "name": "wallet-intel-meta-mcp",
+  "name": "@money-tree/crypto-market-meta-mcp",
   "version": "0.1.0",
-  "description": "x402 META-aggregator: composes 7 EVM wallet-intelligence services into one wallet dossier (labels, portfolio risk, DeFi health, MEV exposure, approvals risk, CEX flows, funding trace). Pay-per-call USDC on Base.",
+  "description": "x402 META: cross-feed crypto consensus price across coinpaprika + coincap + coinlore + cryptocompare + kraken. Pay-per-call USDC on Base.",
   "private": true,
   "type": "module",
   "main": "src/worker.js",
