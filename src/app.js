@@ -221,7 +221,7 @@ app.post("/v1/crypto/consensus", async (c) => {
   try { body = await c.req.json(); } catch { body = {}; }
   const { symbol } = body || {};
   try {
-    const out = await buildCryptoConsensus({ symbol, timeoutMs: UPSTREAM_TIMEOUT_MS });
+    const out = await buildCryptoConsensus({ symbol, timeoutMs: UPSTREAM_TIMEOUT_MS, paymentHeader: c.req.header("x-payment") });
     return c.json(out);
   } catch (e) {
     return c.json({ error: "consensus_failed", message: String(e.message || e) }, e.status || 500);
@@ -233,7 +233,7 @@ app.post("/v1/crypto/consensus_summary", async (c) => {
   try { body = await c.req.json(); } catch { body = {}; }
   const { symbol } = body || {};
   try {
-    const out = await buildCryptoConsensusSummary({ symbol, timeoutMs: UPSTREAM_TIMEOUT_MS });
+    const out = await buildCryptoConsensusSummary({ symbol, timeoutMs: UPSTREAM_TIMEOUT_MS, paymentHeader: c.req.header("x-payment") });
     return c.json(out);
   } catch (e) {
     return c.json({ error: "consensus_summary_failed", message: String(e.message || e) }, e.status || 500);

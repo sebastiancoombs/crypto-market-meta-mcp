@@ -70,7 +70,7 @@ function isSymbol(s) {
   return typeof s === "string" && s.trim().length >= 2 && s.length < 20;
 }
 
-async function fetchFeed(feed, payload, timeoutMs) {
+async function fetchFeed(feed, payload, timeoutMs, paymentHeader) {
   const start = Date.now();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -78,7 +78,7 @@ async function fetchFeed(feed, payload, timeoutMs) {
   try {
     const r = await fetch(feed.url, {
       method: "POST",
-      headers: { "content-type": "application/json", "user-agent": "crypto-market-meta-mcp/0.1.0" },
+      headers: { "content-type": "application/json", ...(paymentHeader ? { "x-payment": paymentHeader } : {}), "user-agent": "crypto-market-meta-mcp/0.1.0" },
       body: JSON.stringify(feed.body(payload)),
       signal: controller.signal,
     });
@@ -125,7 +125,7 @@ function consensusPrice(rows) {
   return { median, mean, min, max, spread_pct: spread, sources_used: prices.length };
 }
 
-export async function buildCryptoConsensus({ symbol, timeoutMs }) {
+export async function buildCryptoConsensus({ symbol, timeoutMs, paymentHeader }) {
   if (!isSymbol(symbol)) {
     const e = new Error("`symbol` is required (e.g., BTC, ETH, SOL)");
     e.status = 400;
@@ -134,7 +134,7 @@ export async function buildCryptoConsensus({ symbol, timeoutMs }) {
   const t = Number(timeoutMs) || 8000;
   const payload = { symbol };
   const t0 = Date.now();
-  const settled = await Promise.allSettled(FEEDS.map((f) => fetchFeed(f, payload, t)));
+  const settled = await Promise.allSettled(FEEDS.map((f) => fetchFeed(f, payload, t, paymentHeader)));
   const feeds = [];
   for (const r of settled) {
     if (r.status === "fulfilled") feeds.push(r.value);
@@ -153,7 +153,7 @@ export async function buildCryptoConsensus({ symbol, timeoutMs }) {
     consensus,
     feeds,
     note:
-      "v0.1 fan-out captures upstream 402 envelopes (per-feed source_url + ok=false). Settle X-PAYMENT against each source_url for live data; v0.2 wires meta-payment-passthrough.",
+      "v0.1 fan-out captures upstream 402 envelopes (per-feed source_url + ok=false). Settle X-PAYMENT against each source_url for live data; v0.2 forwards caller X-PAYMENT to upstream MT services when present.",
   };
 }
 
